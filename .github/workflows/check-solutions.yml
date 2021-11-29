@@ -1,4 +1,4 @@
-name: Verify Advent of Code
+name: Check all solutions
 
 on:
   push:
@@ -19,5 +19,5 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: maven
-      - name: Verify with Maven
-        run: mvn --batch-mode verify
+      - name: Run unit tests with Maven
+        run: mvn --batch-mode test
