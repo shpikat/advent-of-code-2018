@@ -14,3 +14,7 @@ language in itself. I mean, there is a reason for the language to have exactly w
 
 Having all that in mind, my concern is to create the properly maintainable code, which is nice to read, understand and
 hopefully learn from it.
+
+### Status
+
+[![Check solutions](https://github.com/shpikat/advent-of-code-2018/actions/workflows/check-solutions.yml/badge.svg)](https://github.com/shpikat/advent-of-code-2018/actions/workflows/check-solutions.yml)
