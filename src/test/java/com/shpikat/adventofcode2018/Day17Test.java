@@ -51,7 +51,7 @@ class Day17Test {
     @DisplayName("Part 2")
     @Nested
     class Part2Test {
-        @DisplayName("What is the outcome?")
+        @DisplayName("How many tiles of water retain?")
         @ParameterizedTest(name = "{0} - {1}")
         @MethodSource("testCases")
         void testSolution(final String input, final int answer) {
