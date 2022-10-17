@@ -1,8 +1,14 @@
 package com.shpikat.adventofcode2018;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.shpikat.adventofcode2018.Utils.readInput;
 
 public class Day18 {
     private static final char SYMBOL_GROUND = '.';
@@ -21,7 +27,7 @@ public class Day18 {
         private static final int MINUTES = 10;
 
         static int solve(final String input) {
-            final byte[][] area = readInput(input);
+            final byte[][] area = readArea(input);
 
             for (int minute = 0; minute < MINUTES; minute++) {
                 update(area);
@@ -36,7 +42,7 @@ public class Day18 {
         public static final int MINUTES = 1_000_000_000;
 
         static int solve(final String input) {
-            final byte[][] area = readInput(input);
+            final byte[][] area = readArea(input);
 
             // Observing the output, suggests the history will repeat itself.
             final Map<BitSet, Integer> historyIndex = new HashMap<>();
@@ -57,7 +63,7 @@ public class Day18 {
         }
     }
 
-    private static byte[][] readInput(final String input) {
+    private static byte[][] readArea(final String input) {
         final String[] lines = input.split("\n");
         assert lines.length > 0;
         final byte[][] area = new byte[lines.length][];
@@ -186,4 +192,70 @@ public class Day18 {
         return patterns;
     }
 
+    private static class DemoPanel extends JPanel {
+        static final int SIZE = 8;
+        private final byte[][] area;
+        private final AtomicBoolean done = new AtomicBoolean(false);
+
+        private DemoPanel(final byte[][] area) {
+            this.area = area;
+        }
+
+        @Override
+        public void paintComponent(final Graphics g) {
+            super.paintComponent(g);
+            for (int y = 1; y < area.length - 1; y++) {
+                for (int x = 1; x < area[y].length - 1; x++) {
+                    switch (area[y][x] & 0b11) {
+                        case TREE -> g.drawLine(
+                                x * SIZE + SIZE / 2,
+                                y * SIZE + 1,
+                                x * SIZE + SIZE / 2,
+                                y * SIZE + SIZE - 1);
+                        case LUMBERYARD -> g.fillRect(
+                                x * SIZE + 1,
+                                y * SIZE + 1,
+                                SIZE - 1,
+                                SIZE - 1);
+                    }
+                }
+            }
+
+            if (done.get()) {
+                g.drawString("All done. You can close the window now.", SIZE, (int) (getSize().getHeight()) - SIZE);
+            }
+        }
+
+        private void updated() {
+            repaint();
+            try {
+                Thread.sleep(20);
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        private void done() {
+            done.lazySet(true);
+            repaint();
+        }
+    }
+
+    public static void main(final String[] args) throws IOException {
+        final byte[][] area = readArea(readInput("day18_input.txt"));
+
+        final DemoPanel panel = new DemoPanel(area);
+        final JFrame f = new JFrame();
+        f.add(panel);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.setSize(area[0].length * DemoPanel.SIZE, (area.length + 10) * DemoPanel.SIZE);
+        f.setVisible(true);
+
+        for (int minute = 0; minute < Part2.MINUTES; minute++) {
+            update(area);
+            panel.updated();
+        }
+
+        panel.done();
+    }
 }
